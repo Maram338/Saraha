@@ -21,3 +21,7 @@ export const findOne = async ({model, filter = {}, options = {}, select = "" } =
 export const findById = async({model, id, select = {}}) => {
    return await model.findById(id).select(select)
 }
+
+export const findOneAndUpdate = async ({ model, filter = {}, data = {}, options = { new: true } } = {}) =>{
+    return await model.findOneAndUpdate(filter, data, options)
+}
