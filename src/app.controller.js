@@ -11,6 +11,7 @@ const bootstrap = ()=>{
     app.get("/",(req,res,next)=>{console.log("welcome on saraha")})
 
     checkConnectionDB()
+    app.use("/uploads", express.static("uploads"))
     app.use("/users", userRouter)
     
 
