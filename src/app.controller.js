@@ -37,7 +37,7 @@ export const bootstrap = async (app)=>{
         express.json()
     )
 
-    app.get("/",(req,res,next)=>{console.log("welcome on saraha")})
+    app.get("/",(req,res,next)=>{res,send("welcome on saraha")})
 
     checkConnectionDB()
     redisConnection()
@@ -57,8 +57,9 @@ export const bootstrap = async (app)=>{
         res.status(err.cause || 500).json({message: err.message, stack: err.stack})
     })
 
-    app.listen(port,console.log(`server is running on port ${port}`))
-
+if(process.env.NODE_ENV !== "production"){
+    app.listen(port, () => console.log(`server is running on port ${port}`))
+}
 }
 
 export default bootstrap
