@@ -14,9 +14,22 @@ export const sendMessage = async (req,res,next) => {
     }
 
     let arr = []
-    if(req.files.length){
+    if(req.files?.length){ 
         for (const file of req.files) {
-            arr.push(file.path)
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "saraha/messages" },
+                    (error, result) => {
+                        if (error) reject(error)
+                        else resolve(result)
+                    }
+                )
+                stream.end(file.buffer)
+            })
+            arr.push({
+                secure_url: uploadResult.secure_url,
+                public_id: uploadResult.public_id
+            })
         }
     }
 
@@ -35,7 +48,7 @@ export const getMessage = async (req,res,next) => {
     const {messageId} = req.params
 
     const message = await db_service.findOne({
-        model:userModel,
+        model:messageModel,
         filter:{
             _id: messageId, 
             userId: req.user._id
@@ -53,7 +66,7 @@ export const getAllMessages = async (req,res,next) => {
     const messages = await db_service.find({
         model:messageModel,
         filter:{
-            userId: params.userId
+            userId: req.params.userId
         }
     })
 

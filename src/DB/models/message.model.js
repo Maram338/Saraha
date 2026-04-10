@@ -7,7 +7,10 @@ const messageSchema = new mongoose.Schema({
         minLength:1,
         maxLength:20000,
     },
-    attachments: [String],
+    attachments:[{ 
+        secure_url: {type: String},
+        public_id: {type: String}
+    }],
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"user",
