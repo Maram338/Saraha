@@ -11,6 +11,7 @@ const port = PORT
 
 export const bootstrap = async (app)=>{
 
+    app.set("trust proxy", 1)
     const limiter = rateLimit({
         windowMs: 60 * 30 * 100,
         limit: 100,
