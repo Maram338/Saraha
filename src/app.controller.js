@@ -2,17 +2,49 @@ import express from "express";
 import checkConnectionDB from "./DB/connectionDB.js";
 import userRouter from "./modules/users/user.controller.js";
 import cors from "cors"
-import { PORT } from "../config/config.service.js";
-const app = express();
+import { PORT, WHITE_LIST } from "../config/config.service.js";
+import { redisConnection } from "./DB/redis/redis.db.js";
+import messageRouter from "./modules/messages/message.controller.js";
+import { rateLimit } from 'express-rate-limit'
+import helmet from "helmet"
 const port = PORT
 
-const bootstrap = ()=>{
-    app.use(cors(), express.json())
+export const bootstrap = async (app)=>{
+
+    const limiter = rateLimit({
+        windowMs: 60 * 30 * 100,
+        limit: 100,
+        statusCode:400,
+        handler: (req,res,next) => {
+            return res.status(401).json({message: "Game over"})
+        }
+    })
+
+    const corsOptions = {
+    origin: function (origin, callback) {
+    if([...WHITE_LIST, undefined].includes(origin)){
+        callback(null, true)
+    }else{
+        callback(new Error("not allowed by cors"))
+    }
+  }
+}
+    app.use(
+        cors(corsOptions),
+        helmet(),
+        limiter,
+        express.json()
+    )
+
     app.get("/",(req,res,next)=>{console.log("welcome on saraha")})
 
     checkConnectionDB()
+    redisConnection()
+
     app.use("/uploads", express.static("uploads"))
+
     app.use("/users", userRouter)
+    app.use("/messages", messageRouter)
     
 
     app.get("{/*demo}",(req,res,next)=>{

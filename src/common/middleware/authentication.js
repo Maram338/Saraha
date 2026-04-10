@@ -1,7 +1,10 @@
 import * as db_service  from "../../DB/db.service.js"
 import { verifyToken } from "../../utils/token.service.js"
 import userModel from "../../DB/models/user.model.js"
-import { PREFIX } from "../../../config/config.service.js"
+import { PREFIX, SECRET_KEY } from "../../../config/config.service.js"
+import revokeTokenModel from "../../DB/models/revokeToken.model.js"
+import { get } from "../../DB/redis/redis.service.js"
+import { revoked_key } from "../../DB/redis/redis.service.js"
 
 export const authentication = async (req,res,next) => {
     const {authorization} = req.headers
@@ -13,7 +16,8 @@ export const authentication = async (req,res,next) => {
     if(prefix !== PREFIX){
         throw new Error("invalid token prefix")
     }
-    const decoded = verifyToken({token, secret_key: "secret"})
+    const decoded = verifyToken({token, secret_key: SECRET_KEY})
+
 
     if(!decoded || !decoded?.id){
         throw new Error("invalid token")
@@ -27,6 +31,19 @@ export const authentication = async (req,res,next) => {
     if(!user){
         throw new Error ("user not found")
     }
+
+    if(user?.changeCredential?.getTime() > decoded.iat * 1000){
+        throw new Error ("token is invalid")
+    }
+    
     req.user = user
+    req.decoded = decoded 
+
+    const revoked = await get(revoked_key({userId: req.user._id, jti: req.decoded.jti}))
+    
+    if(revoked){
+        throw new Error("this token is invalid")
+    }
+
     next()
 }

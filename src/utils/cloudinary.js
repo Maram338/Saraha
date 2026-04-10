@@ -1,9 +1,10 @@
 import {v2 as cloudinary} from 'cloudinary'
+import { API_KEY, API_SECRET, CLOUD_NAME } from '../../config/config.service.js';
 
 cloudinary.config({ 
-  cloud_name: 'dpsotrcxt', 
-  api_key: '297761483159213', 
-  api_secret: 'mrVmsrBrvp2WMA2pqLUStpYbbfs'
+  cloud_name: CLOUD_NAME, 
+  api_key: API_KEY, 
+  api_secret: API_SECRET
 });
 
 export default cloudinary

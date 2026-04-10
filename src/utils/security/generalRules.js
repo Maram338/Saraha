@@ -1,6 +1,7 @@
 import joi from "joi"
 import { Types } from "mongoose"
 
+
 export const generalRules = {
     email: joi.string().email({tlds:{allow:true}, minDomainSegments:2, maxDomainSegments:3}),
     password :joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,12}$/),
@@ -19,7 +20,7 @@ export const generalRules = {
         filename:joi.string().required(),
         path:joi.string().required(),
         size:joi.number().required()
-    }).message({
+    }).messages({
        'any.required':"file is required"
     })
 }

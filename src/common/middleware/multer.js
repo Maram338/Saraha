@@ -19,7 +19,7 @@ export const multer_local = ({customPath = "general", customType = []} = {}) => 
 
     function fileFilter (req, file, cb) {
         if(!customType.includes(file.mimetype)){
-            cb(new Error ("invalid file type"))
+           return cb(new Error ("invalid file type"))
         }
         cb(null, true)
 }
@@ -30,14 +30,14 @@ export const multer_local = ({customPath = "general", customType = []} = {}) => 
 
 export const multer_host = (customType = []) => {
 
-    const storage = multer.diskStorage({})
+    const storage = multer.memoryStorage({})
 
     function fileFilter (req, file, cb) {
-        if(!customType.includes(file.mimetype)){
-            cb(new Error ("invalid file type"))
+        if (customType.length > 0 && !customType.includes(file.mimetype)) {
+            return cb(new Error("invalid file type"), false);
         }
         cb(null, true)
 }
-    const upload = multer({storage, fileFilter})
+    const upload = multer({storage, fileFilter, limits: {fileSize: 5 * 1024 * 1024}})
     return upload
 }

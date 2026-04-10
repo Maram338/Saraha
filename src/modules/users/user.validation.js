@@ -4,7 +4,7 @@ import { generalRules } from "../../utils/security/generalRules.js"
 
 export const signUpSchema = {
     body: joi.object({
-    userName:joi.string().min(10).max(40).required(),
+    userName:joi.string().min(3).max(40).required(),
     email: generalRules.email.required(),
     password: generalRules.password.required(),
     cPassword: generalRules.cpassword.required(),
@@ -13,12 +13,8 @@ export const signUpSchema = {
 }).required().messages({
     "any.required": "body should not be empty" 
 }),
-//file: generalRules.file.required()
-//files:joi.array().max(2).items(generalRules.file.required()).required
-files:joi.object({
-    attachment: joi.array().max(1).items(generalRules.file.required()).required(),
-    attachments:joi.array().max(3).items(generalRules.file.required()).required()
-  }).required()
+
+file: generalRules.file.optional().unknown(true)
 }
 
 export const signInSchema = {
@@ -46,7 +42,27 @@ export const updateProfileSchema = {
 export const updatePasswordSchema = {
     body: joi.object({
         newPassword: generalRules.password.required(),
-        cPassword: joi.string().valid(joi.ref("newPassword")),
+        cPassword: joi.string().valid(joi.ref("newPassword")).required(),
         oldPassword: generalRules.password.required(),
-    })
+    }).required()
+}
+
+export const confirmEmailSchema = {
+    body: joi.object({
+        email: generalRules.email.required(),
+        code: joi.string().regex(/^\d{6}$/).required()
+    }).required()
+}
+
+export const resendOtpSchema = {
+    body: joi.object({
+        email: generalRules.email.required()
+    }).required()
+}
+
+export const resetPasswordSchema = {
+    body: signInSchema.body.append({
+        code: joi.string().regex(/^\d{6}$/).required(),
+        cpassword: generalRules.cpassword.required()
+    }).required()
 }

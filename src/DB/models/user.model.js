@@ -4,14 +4,14 @@ import { genderEnum, providerEnum, roleEnum } from "../../common/enum/user.enum.
 const userSchema = new mongoose.Schema({
     firstName:{
         type:String,
-        required:String,
+        required:true,
         minLength:3,
         maxLength:8,
         trim:true
     },
     lastName:{
         type:String,
-        required:String,
+        required:true,
         minLength:3,
         maxLength:8,
         trim:true
@@ -38,20 +38,19 @@ const userSchema = new mongoose.Schema({
         enum:Object.values(genderEnum),
         default: genderEnum.male
     },
-    profilePicture: { 
-        secure_url: {type: String, required: true},
-        public_id: {type: String, required: true}
+    profilePicture:{ 
+        secure_url: {type: String},
+        public_id: {type: String}
     },
-    album: [{ 
-        secure_url: {type: String, required: true},
-        public_id: {type: String, required: true}
-    }],
     provider:{
         type:String,
         enum:Object.values(providerEnum),
         default:providerEnum.system
     },
-    confirmed:Boolean,
+    confirmed:{
+        type: Boolean,
+        default: false
+    },
     role:{
         type:String,
         required:true,
@@ -61,7 +60,8 @@ const userSchema = new mongoose.Schema({
     views: {
         type:String,
         default:0
-    }
+    },
+    changeCredential:Date
 },{
     timestamps:true,
     strictQuery:true,

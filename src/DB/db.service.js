@@ -22,6 +22,12 @@ export const findById = async({model, id, select = {}}) => {
    return await model.findById(id).select(select)
 }
 
-export const findOneAndUpdate = async ({ model, filter = {}, data = {}, options = { new: true } } = {}) =>{
-    return await model.findOneAndUpdate(filter, data, options)
+export const findOneAndUpdate = async ({ model, filter = {}, update = {}, data = {}, options = { new: true } } = {}) =>{
+    return await model.findOneAndUpdate(filter, update, data, options)
+}
+export const deleteMany = async ({ model, filter = {} } = {}) =>{
+    return await model.deleteMany(filter)
+}
+export const find = async ({ model, filter = {} } = {}) =>{
+    return await model.find(filter)
 }
