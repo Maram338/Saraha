@@ -37,7 +37,7 @@ export const bootstrap = async (app)=>{
         express.json()
     )
 
-    app.get("/",(req,res,next)=>{res,send("welcome on saraha")})
+    app.get("/",(req,res,next)=>{res.send("welcome on saraha")})
 
     checkConnectionDB()
     redisConnection()
